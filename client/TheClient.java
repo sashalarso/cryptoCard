@@ -231,14 +231,14 @@ public class TheClient {
 
 		short fileID = Short.valueOf(readKeyboard().trim());
 
-		byte[] payload = new byte[5];
-		payload[0] = CLA;
-		payload[1] = GETFILE;
-		payload[2] = FILEINFO;
-		payload[3] = (byte) fileID;
-		payload[4] = (byte) 0;
+		byte[] apdu = new byte[5];
+		apdu[0] = CLA;
+		apdu[1] = GETFILE;
+		apdu[2] = FILEINFO;
+		apdu[3] = (byte) fileID;
+		apdu[4] = (byte) 0;
 
-		cmd = new CommandAPDU(payload);
+		cmd = new CommandAPDU(apdu);
 		displayAPDU(cmd);
 		resp = this.sendAPDU(cmd, DISPLAY);
 
@@ -261,26 +261,26 @@ public class TheClient {
 			String msg = "(DATA TRUNK)";
 			for (short i = 0; i <= nbTrunks; ++i) {
 				if (i < nbTrunks) { // Trunks
-					payload = new byte[7];
-					payload[0] = CLA;
-					payload[1] = GETFILE;
-					payload[2] = FULLAPDU;
-					payload[3] = (byte) fileID;
-					payload[4] = (byte) 1;
-					payload[5] = (byte) i;
-					payload[payload.length - 1] = (byte) DMS;
+					apdu = new byte[7];
+					apdu[0] = CLA;
+					apdu[1] = GETFILE;
+					apdu[2] = FULLAPDU;
+					apdu[3] = (byte) fileID;
+					apdu[4] = (byte) 1;
+					apdu[5] = (byte) i;
+					apdu[apdu.length - 1] = (byte) DMS;
 
 				} else if (i == nbTrunks) { // Last Trunk
-					payload = new byte[5];
-					payload[0] = CLA;
-					payload[1] = GETFILE;
-					payload[2] = LASTAPDU;
-					payload[3] = (byte) fileID;
-					payload[4] = (byte) 0;
+					apdu = new byte[5];
+					apdu[0] = CLA;
+					apdu[1] = GETFILE;
+					apdu[2] = LASTAPDU;
+					apdu[3] = (byte) fileID;
+					apdu[4] = (byte) 0;
 					msg = "(LAST DATA TRUNK)";
 				}
 
-				cmd = new CommandAPDU(payload);
+				cmd = new CommandAPDU(apdu);
 				resp = this.sendAPDU(cmd, DISPLAY);
 
 				
@@ -317,14 +317,14 @@ public class TheClient {
 		CommandAPDU cmd;
 		ResponseAPDU resp;
 
-		byte[] payload = new byte[5];
-		payload[0] = CLA;
-		payload[1] = LISTFILES;
-		payload[2] = FILEINFO;
-		payload[3] = P2;
-		payload[4] = (byte) 0;
+		byte[] apdu = new byte[5];
+		apdu[0] = CLA;
+		apdu[1] = LISTFILES;
+		apdu[2] = FILEINFO;
+		apdu[3] = P2;
+		apdu[4] = (byte) 0;
 
-		cmd = new CommandAPDU(payload);
+		cmd = new CommandAPDU(apdu);
 		resp = this.sendAPDU(cmd, DISPLAY);
 
 		
@@ -345,14 +345,14 @@ public class TheClient {
 
 			List<String> fileList = new ArrayList<String>();
 			for (short i = 0; i < nbFiles; ++i) {
-				payload = new byte[5];
-				payload[0] = CLA;
-				payload[1] = LISTFILES;
-				payload[2] = GETFILES;
-				payload[3] = (byte) i;
-				payload[4] = (byte) 0;
+				apdu = new byte[5];
+				apdu[0] = CLA;
+				apdu[1] = LISTFILES;
+				apdu[2] = GETFILES;
+				apdu[3] = (byte) i;
+				apdu[4] = (byte) 0;
 
-				cmd = new CommandAPDU(payload);
+				cmd = new CommandAPDU(apdu);
 				displayAPDU(cmd);
 				resp = this.sendAPDU(cmd, DISPLAY);
 
@@ -446,18 +446,18 @@ public class TheClient {
 
 		short fileLength = (short) f.length(); // 2 bytes
 		short LC = (short) (filenameLength + 3);
-		byte[] payload = new byte[LC + 5];
-		payload[0] = CLA;
-		payload[1] = ADDFILE;
-		payload[2] = FILEINFO;
-		payload[3] = P2;
-		payload[4] = (byte) LC;
-		payload[5] = filenameLength; // filename length
-		System.arraycopy(filename_b, 0, payload, 6, filenameLength); // filename
-		payload[payload.length - 2] = shortToByteArray(fileLength)[0]; 
-		payload[payload.length - 1] = shortToByteArray(fileLength)[1]; 
+		byte[] apdu = new byte[LC + 5];
+		apdu[0] = CLA;
+		apdu[1] = ADDFILE;
+		apdu[2] = FILEINFO;
+		apdu[3] = P2;
+		apdu[4] = (byte) LC;
+		apdu[5] = filenameLength; // filename length
+		System.arraycopy(filename_b, 0, apdu, 6, filenameLength); // filename
+		apdu[apdu.length - 2] = shortToByteArray(fileLength)[0]; 
+		apdu[apdu.length - 1] = shortToByteArray(fileLength)[1]; 
 
-		cmd = new CommandAPDU(payload);
+		cmd = new CommandAPDU(apdu);
 		resp = this.sendAPDU(cmd, DISPLAY);
 
 		try {
@@ -476,15 +476,15 @@ public class TheClient {
 					i = 0;
 					
 					LC = (short) data.length;
-					payload = new byte[LC + 5];
-					payload[0] = CLA;
-					payload[1] = ADDFILE;
-					payload[2] = FULLAPDU;
-					payload[3] = P2;
-					payload[4] = (byte) LC;
-					System.arraycopy(data, 0, payload, 5, LC);
+					apdu = new byte[LC + 5];
+					apdu[0] = CLA;
+					apdu[1] = ADDFILE;
+					apdu[2] = FULLAPDU;
+					apdu[3] = P2;
+					apdu[4] = (byte) LC;
+					System.arraycopy(data, 0, apdu, 5, LC);
 
-					cmd = new CommandAPDU(payload);
+					cmd = new CommandAPDU(apdu);
 					resp = this.sendAPDU(cmd, DISPLAY);
 
 					
@@ -495,15 +495,15 @@ public class TheClient {
 					
 
 					LC = (short) (data.length - 1);
-					payload = new byte[LC + 5];
-					payload[0] = CLA;
-					payload[1] = ADDFILE;
-					payload[2] = LASTAPDU;
-					payload[3] = P2;
-					payload[4] = (byte) LC;
-					System.arraycopy(data, 0, payload, 5, LC);
+					apdu = new byte[LC + 5];
+					apdu[0] = CLA;
+					apdu[1] = ADDFILE;
+					apdu[2] = LASTAPDU;
+					apdu[3] = P2;
+					apdu[4] = (byte) LC;
+					System.arraycopy(data, 0, apdu, 5, LC);
 
-					cmd = new CommandAPDU(payload);
+					cmd = new CommandAPDU(apdu);
 					resp = this.sendAPDU(cmd, DISPLAY);
 
 					
@@ -530,16 +530,16 @@ public class TheClient {
 			return;
 		}
 				
-		byte[] payload = new byte[5+8];
-		payload[0]=CLA;
-		payload[1]=CHANGEDES;
-		payload[2]=P1;
-		payload[3]=P2;
-		payload[4]= (byte) 8;	
+		byte[] apdu = new byte[5+8];
+		apdu[0]=CLA;
+		apdu[1]=CHANGEDES;
+		apdu[2]=P1;
+		apdu[3]=P2;
+		apdu[4]= (byte) 8;	
 		
-		System.arraycopy(new_key.getBytes(), 0, payload,5, 8);
+		System.arraycopy(new_key.getBytes(), 0, apdu,5, 8);
 
-		cmd = new CommandAPDU(payload);
+		cmd = new CommandAPDU(apdu);
 		resp = this.sendAPDU(cmd, DISPLAY);
 
 		System.out.println("");
@@ -587,16 +587,16 @@ public class TheClient {
 					//System.out.print("\n" + "Trunk #" + cpt + " [length: " + data.length + "]");
 					//System.out.println("");
 
-					byte[] payload = new byte[data.length + 6];
-					payload[0] = CLA;
-					payload[1] = DECRYPTFILE;
-					payload[2] = P1;
-					payload[3] = P2;
-					payload[4] = (byte) data.length;
-					System.arraycopy(data, 0, payload, 5, data.length);
-					payload[payload.length - 1] = (byte) data.length;
+					byte[] apdu = new byte[data.length + 6];
+					apdu[0] = CLA;
+					apdu[1] = DECRYPTFILE;
+					apdu[2] = P1;
+					apdu[3] = P2;
+					apdu[4] = (byte) data.length;
+					System.arraycopy(data, 0, apdu, 5, data.length);
+					apdu[apdu.length - 1] = (byte) data.length;
 
-					cmd = new CommandAPDU(payload);
+					cmd = new CommandAPDU(apdu);
 					resp = this.sendAPDU(cmd, DISPLAY);					
 
 					byte[] bytes = resp.getBytes();
@@ -669,16 +669,16 @@ public class TheClient {
 						data = addPadding(data, f.length());
 
 					
-					byte[] payload = new byte[data.length + 6];
-					payload[0] = CLA;
-					payload[1] = ENCRYPTFILE;
-					payload[2] = P1;
-					payload[3] = P2;
-					payload[4] = (byte) data.length;
-					System.arraycopy(data, 0, payload, 5, data.length);
-					payload[payload.length - 1] = (byte) data.length;
+					byte[] apdu = new byte[data.length + 6];
+					apdu[0] = CLA;
+					apdu[1] = ENCRYPTFILE;
+					apdu[2] = P1;
+					apdu[3] = P2;
+					apdu[4] = (byte) data.length;
+					System.arraycopy(data, 0, apdu, 5, data.length);
+					apdu[apdu.length - 1] = (byte) data.length;
 
-					cmd = new CommandAPDU(payload);
+					cmd = new CommandAPDU(apdu);
 					displayAPDU(cmd);
 					resp = this.sendAPDU(cmd, DISPLAY);					
 
