@@ -11,7 +11,7 @@ public class TheApplet extends Applet {
     private static final byte CLA = (byte) 0x37;
 
     /* INSTRUCTION CODES */
-    private static final byte RETRIEVEFILEBYID = (byte) 0x06;
+    private static final byte GETFILE = (byte) 0x06;
     private static final byte LISTFILES = (byte) 0x05;
     static final byte ADDFILE = (byte) 0x04;
     private static final byte DECRYPTFILE = (byte) 0x02;
@@ -179,7 +179,7 @@ public class TheApplet extends Applet {
      ************ END OF METHODS **************
      *******************************************/
 
-    private void retrieveFileByID(APDU apdu) throws ISOException {
+    private void getFile(APDU apdu) throws ISOException {
         apdu.setIncomingAndReceive();
         byte[] buffer = apdu.getBuffer();
         short[] fileStats;
@@ -250,7 +250,7 @@ public class TheApplet extends Applet {
         switch (buffer[ISO7816.OFFSET_P1]) {
             case FILEINFO:
                 /* check if enough space */
-                short space = (short) (3 // metadata required filenameLength, nbFullAPDU & lastAPDUSize
+                short space = (short) (3 
                         + byteToShort(buffer[5]) // filename length
                         + byteArrayToShort(buffer, (short) (4 + byteToShort(buffer[ISO7816.OFFSET_LC]) - 1) // fileLength
                         ));
@@ -308,8 +308,8 @@ public class TheApplet extends Applet {
             ISOException.throwIt(ISO7816.SW_CLA_NOT_SUPPORTED);
 
         switch (buffer[ISO7816.OFFSET_INS]) {
-            case RETRIEVEFILEBYID:
-                retrieveFileByID(apdu);
+            case GETFILE:
+                getFile(apdu);
                 break;
 
             case LISTFILES:

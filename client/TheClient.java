@@ -19,7 +19,7 @@ public class TheClient {
 	private static final byte P2 = (byte) 0x00;
 
 	/* INSTRUCTION CODES */
-	private static final byte RETRIEVEFILEBYID = (byte) 0x06;
+	private static final byte GETFILE = (byte) 0x06;
 	private static final byte LISTFILES = (byte) 0x05;
 	private static final byte ADDFILE = (byte) 0x04;
 	private static final byte DECRYPTFILE = (byte) 0x02;
@@ -206,12 +206,12 @@ public class TheClient {
 		if (paddingSize > 8)
 			return paddingData;
 
-		/* check if padding exists */
+		
 		for (short i = (short) (paddingData.length - paddingSize); i < paddingData.length; ++i)
 			if (paddingData[i] != (byte) paddingSize)
 				return paddingData;
 
-		/* Remove padding */
+		
 		short dataLength = (short) (paddingData.length - paddingSize);
 		byte[] data = new byte[dataLength];
 		System.arraycopy(paddingData, 0, data, 0, (short) dataLength);
@@ -233,7 +233,7 @@ public class TheClient {
 
 		byte[] payload = new byte[5];
 		payload[0] = CLA;
-		payload[1] = RETRIEVEFILEBYID;
+		payload[1] = GETFILE;
 		payload[2] = FILEINFO;
 		payload[3] = (byte) fileID;
 		payload[4] = (byte) 0;
@@ -263,7 +263,7 @@ public class TheClient {
 				if (i < nbTrunks) { // Trunks
 					payload = new byte[7];
 					payload[0] = CLA;
-					payload[1] = RETRIEVEFILEBYID;
+					payload[1] = GETFILE;
 					payload[2] = FULLAPDU;
 					payload[3] = (byte) fileID;
 					payload[4] = (byte) 1;
@@ -273,7 +273,7 @@ public class TheClient {
 				} else if (i == nbTrunks) { // Last Trunk
 					payload = new byte[5];
 					payload[0] = CLA;
-					payload[1] = RETRIEVEFILEBYID;
+					payload[1] = GETFILE;
 					payload[2] = LASTAPDU;
 					payload[3] = (byte) fileID;
 					payload[4] = (byte) 0;
@@ -474,9 +474,7 @@ public class TheClient {
 					byte data[] = outputStream.toByteArray();
 					outputStream = new ByteArrayOutputStream();
 					i = 0;
-					//System.out.print("\n" + "Trunk #" + cpt++ + " [length: " + data.length + "]");
-					//System.out.println("");
-
+					
 					LC = (short) data.length;
 					payload = new byte[LC + 5];
 					payload[0] = CLA;
@@ -494,7 +492,7 @@ public class TheClient {
 				} else if (read_from_stream == -1 && i > 1) {
 					byte data[] = outputStream.toByteArray();
 					outputStream = new ByteArrayOutputStream();
-					//System.out.print("\n" + "Trunk #" + cpt++ + " [length: " + (data.length - 1) + "]\n");
+					
 
 					LC = (short) (data.length - 1);
 					payload = new byte[LC + 5];
@@ -670,9 +668,7 @@ public class TheClient {
 					if (read_from_stream == -1)
 						data = addPadding(data, f.length());
 
-					//System.out.print("\n" + "Trunk #" + cpt++ + " [length: " + data.length + "]");
-					//System.out.println("");
-
+					
 					byte[] payload = new byte[data.length + 6];
 					payload[0] = CLA;
 					payload[1] = ENCRYPTFILE;
